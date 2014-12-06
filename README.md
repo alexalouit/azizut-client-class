@@ -27,7 +27,7 @@ $azizut->url = "link to shorten";
 $azizut->insert();
 
 print_r($azizut->shorturl);
-``
+```
 
 ## Delete a link by shorturl / by longurl (slowest as by shortlink, attention may be multiple!):
 
