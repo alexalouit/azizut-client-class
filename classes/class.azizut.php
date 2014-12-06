@@ -30,6 +30,7 @@ class azizut {
 	public $content = "";
 	public $url = "";
 	public $shorturl = "";
+	public $link = "";
 	private $query = "";
 	private $action = "";
 	private $params = "";
@@ -58,7 +59,7 @@ class azizut {
 
 	/**
 	 * Make a call
-	 * @return: respone(object)
+	 * @return: response(object)
 	 */
 	private function talker() {
 		if(!empty($this->params)) {
@@ -137,7 +138,7 @@ class azizut {
 
 		foreach($this->search($this->content) as $key => $this->url) {
 			$this->insert();
-			$data = $this->replace($data, $this->url, $this->shorturl);
+			$data = $this->replace($data, $this->url, $this->link);
 
 			if(!is_null($this->delay)) {
 				usleep($this->delay);
@@ -159,6 +160,7 @@ class azizut {
 
 		// prevent bad return
 		$this->shorturl = $this->url;
+		$this->link = $this->url;
 
 		$this->action = "insert";
 		$this->params->url = $this->url;
@@ -166,6 +168,7 @@ class azizut {
 
 		if($this->valid && !empty($this->response->data->shorturl)) {
 			$this->shorturl = $this->response->data->shorturl;
+			$this->link = $this->response->data->link;
 		}
 
 		return $this->shorturl;
