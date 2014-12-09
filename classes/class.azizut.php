@@ -67,7 +67,7 @@ class azizut {
 			$this->query->access->password = $this->password;
 			$this->query->action = $this->action;
 			$this->query->params = $this->params;
-			$this->query = json_encode($this->query);
+			$query = json_encode($this->query);
 			$buffer = curl_init();
 			curl_setopt($buffer, CURLOPT_URL, $this->server);
 			curl_setopt($buffer, CURLOPT_CONNECTTIMEOUT, $this->connectionTimeout);
@@ -76,8 +76,8 @@ class azizut {
 			curl_setopt($buffer, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($buffer, CURLOPT_HTTPHEADER, Array('Content-Type: application/json'));
 			curl_setopt($buffer, CURLOPT_POST, 1);
-			curl_setopt($buffer, CURLOPT_POST, count($this->query));
-			curl_setopt($buffer, CURLOPT_POSTFIELDS, $this->query);
+			curl_setopt($buffer, CURLOPT_POST, count($query));
+			curl_setopt($buffer, CURLOPT_POSTFIELDS, $query);
 
 			$data = curl_exec($buffer);
 			curl_close($buffer);
@@ -131,14 +131,14 @@ class azizut {
 	 * @params: text with url (string)
 	 * @return: text with shortening url (string)
 	 */
-	public function content($content=NULL) {
-		if(!empty($content)) {
-			$this->content = $content;
+	public function content($data=NULL) {
+		if(empty($data)) {
+			$data = $this->content;
 		}
 
-		foreach($this->search($this->content) as $key => $this->url) {
-			$this->insert();
-			$data = $this->replace($data, $this->url, $this->link);
+		foreach($this->search($data) as $key => $toReplace) {
+			$this->insert($toReplace);
+			$data = $this->replace($data, $toReplace, $this->link);
 
 			if(!is_null($this->delay)) {
 				usleep($this->delay);
@@ -148,7 +148,6 @@ class azizut {
 		$this->content = $data;
 		return $this->content;
 	}
-
 	/**
 	 * Shortener by link
 	 * @return: url shortening (string)
