@@ -4,7 +4,9 @@
  * @author: Alexandre Alouit <alexandre.alouit@gmail.com>
  */
 
-class azizut {
+namespace Azizut;
+
+class Azizut {
 
 	/**
 	 * Timeout for complete connection in seconds
@@ -16,7 +18,7 @@ class azizut {
 	 * Timeout for first byte connection in seconds
 	 * @type: int
 	 */
-	private $connectionTimeout = 3;
+	private $connectionTimeout = 4;
 
 	/**
 	 * Delay when we have many links in micro secondes
@@ -39,7 +41,7 @@ class azizut {
 	public $stats = FALSE;
 	public $start = NULL;
 	public $limit = NULL;
-	
+
 
 	/**
 	 * @params: server (string), username (string), password (string)
@@ -48,10 +50,10 @@ class azizut {
 		if(!function_exists('json_decode')) {
 			die("PECL json required.");
 		}
-		if(!function_exists('curl_init')) {
-			die("PHP-Curl required.");
-		}
 
+		$this->params = new \stdClass;
+		$this->query = new \stdClass;
+		$this->query->access = new \stdClass;
 		$this->server = $server;
 		$this->username = $username;
 		$this->password = $password;
@@ -68,21 +70,40 @@ class azizut {
 			$this->query->action = $this->action;
 			$this->query->params = $this->params;
 			$query = json_encode($this->query);
-			$buffer = curl_init();
-			curl_setopt($buffer, CURLOPT_URL, $this->server);
-			curl_setopt($buffer, CURLOPT_CONNECTTIMEOUT, $this->connectionTimeout);
-			curl_setopt($buffer, CURLOPT_TIMEOUT, $this->timeout);
-			curl_setopt($buffer, CURLOPT_HEADER, 0);
-			curl_setopt($buffer, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($buffer, CURLOPT_HTTPHEADER, Array('Content-Type: application/json'));
-			curl_setopt($buffer, CURLOPT_POST, 1);
-			curl_setopt($buffer, CURLOPT_POST, count($query));
-			curl_setopt($buffer, CURLOPT_POSTFIELDS, $query);
 
-			$data = curl_exec($buffer);
-			curl_close($buffer);
+			if(!function_exists('curl_init')) {
+				// using php
+				$opts = array('http' =>
+					array(
+						'method'  => 'POST',
+						'header'  => 'Content-type: application/json\r\nContent-Length: ' . strlen($query) . '\r\n',
+						'content' => $query,
+						'timeout' => $this->timeout
+					)
+				);
+
+				$context  = stream_context_create($opts);
+				$raw_response = file_get_contents($this->server, false, $context);
+
+			} else {
+				// using curl
+				$buffer = curl_init();
+				curl_setopt($buffer, CURLOPT_URL, $this->server);
+				curl_setopt($buffer, CURLOPT_CONNECTTIMEOUT, $this->connectionTimeout);
+				curl_setopt($buffer, CURLOPT_TIMEOUT, $this->timeout);
+				curl_setopt($buffer, CURLOPT_HEADER, 0);
+				curl_setopt($buffer, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($buffer, CURLOPT_HTTPHEADER, array("Content-Type: application/json", "Content-Length: " . strlen($query)));
+				curl_setopt($buffer, CURLOPT_POST, 1);
+				curl_setopt($buffer, CURLOPT_POSTFIELDS, $query);
+
+				$data = curl_exec($buffer);
+				curl_close($buffer);
+
+			}
 
 			$this->response = json_decode($data);
+
 			$this->verify();
 			return $this->response;
 		}
@@ -93,8 +114,8 @@ class azizut {
 	 * @return: (bool)
 	 */
 	private function verify() {
-		if(!empty($this->response->statusCode) 
-			&& ($this->response->statusCode == 200 
+		if(!empty($this->response->statusCode)
+			&& ($this->response->statusCode == 200
 			OR $this->response->statusCode == 202)) {
 			$this->valid = TRUE;
 

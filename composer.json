@@ -1,0 +1,27 @@
+{
+    "name": "alexalouit/azizut-client-class",
+    "type": "library",
+    "description": "PHP Client class for azizut shorten service",
+    "keywords": ["azizut", "api", "shortener"],
+    "homepage": "https://github.com/alexalouit/azizut-client-class/",
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Alouit Alexandre",
+            "email": "alexandre.alouit@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "require-dev": {
+    },
+    "config": {
+    },
+    "suggest" : {
+    },
+    "autoload": {
+        "psr-4": {
+            "Alexalouit\\Azizut\\": "src/"
+        }
+    }
+}

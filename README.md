@@ -18,7 +18,7 @@ OOP style:
 ```
 $azizut->url = "link to shorten";
 $azizut->insert();
-print $azizut->shorturl;
+print $azizut->shorturl; // or $azizut->link (complete url)
 ```
 
 Procedural style:
@@ -26,7 +26,7 @@ Procedural style:
 $azizut->url = "link to shorten";
 $azizut->insert();
 
-print_r($azizut->shorturl);
+print_r($azizut->shorturl); // or $azizut->link (complete url)
 ```
 
 ## Delete a link by shorturl / by longurl (slowest as by shortlink, attention may be multiple!):
@@ -91,7 +91,7 @@ print_r($azizut->response->data);
 Procedural style:
 ```
 //print_r($azizut->get("shorten", "", TRUE)); // or print_r($azizut->get("", "url", TRUE));
-print_r($azizut->get("", "", TRUE)); 
+print_r($azizut->get("", "", TRUE));
 ```
 
 ## Get links list with pagination:
