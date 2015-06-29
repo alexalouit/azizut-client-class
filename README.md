@@ -23,8 +23,7 @@ print $azizut->shorturl; // or $azizut->link (complete url)
 
 Procedural style:
 ```
-$azizut->url = "link to shorten";
-$azizut->insert();
+$azizut->insert("link to shorten");
 
 print_r($azizut->shorturl); // or $azizut->link (complete url)
 ```
